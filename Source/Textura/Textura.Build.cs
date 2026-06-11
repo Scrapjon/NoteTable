@@ -25,7 +25,7 @@ public class Textura : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core", "UMG",
+				"Core", "UMG"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -34,13 +34,17 @@ public class Textura : ModuleRules
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
+				"Projects",
+				"InputCore",
+				"EditorFramework",
+				"UnrealEd",
+				"ToolMenus",
 				"CoreUObject",
 				"Engine",
 				"Slate",
 				"SlateCore",
 				"Json",
 				"JsonUtilities"
-				// ... add private dependencies that you statically link with here ...	
 			}
 			);
 		
