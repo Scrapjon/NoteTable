@@ -33,7 +33,7 @@ class TEXTURA_API UTexturaReadWrite : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 	
 public:
-	// File Reading and writing code adapted from Alex Quevillon
+	// File reading and writing code adapted from Alex Quevillon
 	
 	UFUNCTION(BlueprintCallable, Category="Data|Text|Read")
 	static FString ReadStringFromFile(FString FilePath, bool& bOutSuccess, FString& OutInfoMessage);
@@ -41,10 +41,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Data|Text|Write")
 	static void WriteStringToFile(FString FilePath, FString String, bool& bOutSuccess, FString& OutInfoMessage);
 	
-	// 
+	
 	static TSharedPtr<FJsonObject> ReadJson(const FString& JsonFilePath, bool& bOutSuccess, FString& OutInfoMessage);
 	
-	// 
 	static void WriteJson(const FString& JsonFilePath, const TSharedPtr<FJsonObject>& JsonObject, bool& bOutSuccess, FString& OutInfoMessage);
 	
 	UFUNCTION(BlueprintCallable, Category="Data|Json|Read")
