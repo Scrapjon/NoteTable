@@ -4,6 +4,7 @@
 
 #include "Modules/ModuleManager.h"
 
+class SRichTextBlock;
 class FToolBarBuilder;
 class FMenuBuilder;
 
@@ -23,7 +24,7 @@ private:
 	void RegisterMenus();
 
 	TSharedRef<class SDockTab> OnSpawnPluginTab(const class FSpawnTabArgs& SpawnTabArgs);
-
+	
 private:
 	TSharedPtr<class FUICommandList> PluginCommands;
 };

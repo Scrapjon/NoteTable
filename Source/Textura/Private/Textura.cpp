@@ -8,6 +8,7 @@
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Text/STextBlock.h"
 #include "ToolMenus.h"
+#include  "UI/TexturaWindowWidget.h"
 
 static const FName TexturaTabName("Textura");
 
@@ -59,18 +60,11 @@ TSharedRef<SDockTab> FTexturaModule::OnSpawnPluginTab(const FSpawnTabArgs& Spawn
 		FText::FromString(TEXT("FTexturaModule::OnSpawnPluginTab")),
 		FText::FromString(TEXT("Textura.cpp"))
 		);
-
+	
 	return SNew(SDockTab)
 		.TabRole(ETabRole::NomadTab)
 		[
-			// Put your tab content here!
-			SNew(SBox)
-			.HAlign(HAlign_Center)
-			.VAlign(VAlign_Center)
-			[
-				SNew(STextBlock)
-				.Text(WidgetText)
-			]
+			SNew(STexturaWindowWidget)
 		];
 }
 
