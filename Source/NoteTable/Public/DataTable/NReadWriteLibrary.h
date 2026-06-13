@@ -1,16 +1,16 @@
-// Copyright Oliver Moloney
+﻿// Copyright Oliver Moloney
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/RichTextBlock.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "TexturaReadWrite.generated.h"
+#include "NReadWriteLibrary.generated.h"
 
 class FJsonObject;
 
 USTRUCT(BlueprintType)
-struct FTexturaTextData {
+struct FNoteTableTextData {
 	GENERATED_BODY()
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -24,12 +24,12 @@ struct FTexturaTextData {
 	
 };
 
+
 /**
  * 
  */
 UCLASS()
-class TEXTURA_API UTexturaReadWrite : public UBlueprintFunctionLibrary
-{
+class NOTETABLE_API UNReadWriteLibrary : public UBlueprintFunctionLibrary {
 	GENERATED_BODY()
 	
 public:
@@ -47,8 +47,8 @@ public:
 	static void WriteJson(const FString& JsonFilePath, const TSharedPtr<FJsonObject>& JsonObject, bool& bOutSuccess, FString& OutInfoMessage);
 	
 	UFUNCTION(BlueprintCallable, Category="Data|Json|Read")
-	static FTexturaTextData ReadTextDataFromJsonFile(FString JsonFilePath, bool& bOutSuccess, FString& OutInfoMessage);
+	static FNoteTableTextData ReadTextDataFromJsonFile(FString JsonFilePath, bool& bOutSuccess, FString& OutInfoMessage);
 	
 	UFUNCTION(BlueprintCallable, Category="Data|Json|Write")
-	static void WriteTextDataToJsonFile(FString JsonFilePath, FTexturaTextData TextData, bool& bOutSuccess, FString& OutInfoMessage);
+	static void WriteTextDataToJsonFile(FString JsonFilePath, FNoteTableTextData TextData, bool& bOutSuccess, FString& OutInfoMessage);
 };

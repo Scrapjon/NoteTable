@@ -1,11 +1,12 @@
-// Copyright Oliver Moloney
+﻿// Copyright Oliver Moloney
 
 
-#include "DataTable/TexturaReadWrite.h"
+#include "DataTable/NReadWriteLibrary.h"
 
 #include "JsonObjectConverter.h"
 
-FString UTexturaReadWrite::ReadStringFromFile(FString FilePath, bool& bOutSuccess, FString& OutInfoMessage) {
+FString UNReadWriteLibrary::ReadStringFromFile(FString FilePath, bool& bOutSuccess, FString& OutInfoMessage) {
+	
 	// Check if file exists
 	if (!FPlatformFileManager::Get().GetPlatformFile().FileExists((*FilePath))) {
 		bOutSuccess = false;
@@ -26,7 +27,8 @@ FString UTexturaReadWrite::ReadStringFromFile(FString FilePath, bool& bOutSucces
 	return RetString;
 }
 
-void UTexturaReadWrite::WriteStringToFile(FString FilePath, FString String, bool& bOutSuccess, FString& OutInfoMessage) {
+void UNReadWriteLibrary::WriteStringToFile(FString FilePath, FString String, bool& bOutSuccess, FString& OutInfoMessage) {
+	
 	// Try to write string into the file
 	if (!FFileHelper::SaveStringToFile(String, *FilePath)) {
 		bOutSuccess = false;
@@ -37,7 +39,9 @@ void UTexturaReadWrite::WriteStringToFile(FString FilePath, FString String, bool
 	OutInfoMessage = FString::Printf(TEXT("Write String To File Succeeded - '%s'"), *FilePath);
 }
 
-TSharedPtr<FJsonObject> UTexturaReadWrite::ReadJson(const FString& JsonFilePath, bool& bOutSuccess, FString& OutInfoMessage) {
+TSharedPtr<FJsonObject> UNReadWriteLibrary::ReadJson(const FString& JsonFilePath, bool& bOutSuccess,
+	FString& OutInfoMessage) {
+	
 	const FString JsonString = ReadStringFromFile(JsonFilePath, bOutSuccess, OutInfoMessage);
 	if (!bOutSuccess) {
 		return nullptr;
@@ -56,7 +60,9 @@ TSharedPtr<FJsonObject> UTexturaReadWrite::ReadJson(const FString& JsonFilePath,
 	return RetJsonObject;
 }
 
-void UTexturaReadWrite::WriteJson(const FString& JsonFilePath, const TSharedPtr<FJsonObject>& JsonObject, bool& bOutSuccess, FString& OutInfoMessage) {
+void UNReadWriteLibrary::WriteJson(const FString& JsonFilePath, const TSharedPtr<FJsonObject>& JsonObject,
+	bool& bOutSuccess, FString& OutInfoMessage) {
+	
 	FString JsonString;
 	
 	if (!FJsonSerializer::Serialize(JsonObject.ToSharedRef(), TJsonWriterFactory<>::Create(&JsonString, 0))) {
@@ -71,25 +77,25 @@ void UTexturaReadWrite::WriteJson(const FString& JsonFilePath, const TSharedPtr<
 	}
 	bOutSuccess = true;
 	OutInfoMessage = FString::Printf(TEXT("Write Json Succeeded - '%s'"), *JsonFilePath);
-	
 }
 
-FTexturaTextData UTexturaReadWrite::ReadTextDataFromJsonFile(FString JsonFilePath, bool& bOutSuccess, FString& OutInfoMessage) {
+FNoteTableTextData UNReadWriteLibrary::ReadTextDataFromJsonFile(FString JsonFilePath, bool& bOutSuccess,
+	FString& OutInfoMessage) {
 	
 	// Try to read generic json object from file
 	TSharedPtr<FJsonObject> JsonObject = ReadJson(JsonFilePath, bOutSuccess, OutInfoMessage);
 	if (!bOutSuccess) {
-		return FTexturaTextData();
+		return FNoteTableTextData();
 	}
 	
-	FTexturaTextData RetTextData;
+	FNoteTableTextData RetTextData;
 	
-	if (!FJsonObjectConverter::JsonObjectToUStruct<FTexturaTextData>(JsonObject.ToSharedRef(), &RetTextData)) {
+	if (!FJsonObjectConverter::JsonObjectToUStruct<FNoteTableTextData>(JsonObject.ToSharedRef(), &RetTextData)) {
 		bOutSuccess = false;
 		OutInfoMessage = FString::Printf(TEXT(
 			"Read Struct Json Failed - Was not able to convert the json object to your desired structure. "
 			"Is is the right format / struct? - '%s'"), *JsonFilePath);
-		return FTexturaTextData();
+		return FNoteTableTextData();
 	}
 	
 	bOutSuccess = true;
@@ -97,7 +103,8 @@ FTexturaTextData UTexturaReadWrite::ReadTextDataFromJsonFile(FString JsonFilePat
 	return RetTextData;
 }
 
-void UTexturaReadWrite::WriteTextDataToJsonFile(FString JsonFilePath, const FTexturaTextData TextData, bool& bOutSuccess, FString& OutInfoMessage) {
+void UNReadWriteLibrary::WriteTextDataToJsonFile(FString JsonFilePath, FNoteTableTextData TextData, bool& bOutSuccess,
+	FString& OutInfoMessage) {
 	
 	TSharedPtr<FJsonObject> JsonObject = FJsonObjectConverter::UStructToJsonObject(TextData);
 	if (!JsonObject) {

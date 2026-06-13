@@ -5,7 +5,7 @@
 #include "Styling/SlateStyle.h"
 
 /**  */
-class FTexturaStyle
+class FNoteTableStyle
 {
 public:
 

@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "TexturaStyle.h"
+#include "NoteTableStyle.h"
 #include "Styling/SlateStyleRegistry.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Slate/SlateGameResources.h"
@@ -9,9 +9,9 @@
 
 #define RootToContentDir Style->RootToContentDir
 
-TSharedPtr<FSlateStyleSet> FTexturaStyle::StyleInstance = nullptr;
+TSharedPtr<FSlateStyleSet> FNoteTableStyle::StyleInstance = nullptr;
 
-void FTexturaStyle::Initialize()
+void FNoteTableStyle::Initialize()
 {
 	if (!StyleInstance.IsValid())
 	{
@@ -20,33 +20,33 @@ void FTexturaStyle::Initialize()
 	}
 }
 
-void FTexturaStyle::Shutdown()
+void FNoteTableStyle::Shutdown()
 {
 	FSlateStyleRegistry::UnRegisterSlateStyle(*StyleInstance);
 	ensure(StyleInstance.IsUnique());
 	StyleInstance.Reset();
 }
 
-FName FTexturaStyle::GetStyleSetName()
+FName FNoteTableStyle::GetStyleSetName()
 {
-	static FName StyleSetName(TEXT("TexturaStyle"));
+	static FName StyleSetName(TEXT("NoteTableStyle"));
 	return StyleSetName;
 }
 
 const FVector2D Icon16x16(16.0f, 16.0f);
 const FVector2D Icon20x20(20.0f, 20.0f);
 
-TSharedRef< FSlateStyleSet > FTexturaStyle::Create()
+TSharedRef< FSlateStyleSet > FNoteTableStyle::Create()
 {
-	TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("TexturaStyle"));
-	Style->SetContentRoot(IPluginManager::Get().FindPlugin("Textura")->GetBaseDir() / TEXT("Resources"));
+	TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("NoteTableStyle"));
+	Style->SetContentRoot(IPluginManager::Get().FindPlugin("NoteTable")->GetBaseDir() / TEXT("Resources"));
 
-	Style->Set("Textura.OpenPluginWindow", new IMAGE_BRUSH_SVG(TEXT("PlaceholderButtonIcon"), Icon20x20));
+	Style->Set("NoteTable.OpenPluginWindow", new IMAGE_BRUSH_SVG(TEXT("PlaceholderButtonIcon"), Icon20x20));
 
 	return Style;
 }
 
-void FTexturaStyle::ReloadTextures()
+void FNoteTableStyle::ReloadTextures()
 {
 	if (FSlateApplication::IsInitialized())
 	{
@@ -54,7 +54,7 @@ void FTexturaStyle::ReloadTextures()
 	}
 }
 
-const ISlateStyle& FTexturaStyle::Get()
+const ISlateStyle& FNoteTableStyle::Get()
 {
 	return *StyleInstance;
 }

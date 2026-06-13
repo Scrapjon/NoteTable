@@ -1,7 +1,7 @@
 ﻿// Copyright Oliver Moloney
 
 
-#include "UI/TexturaWindowWidget.h"
+#include "UI/NWindowWidget.h"
 
 #include "SlateOptMacros.h"
 #include "Widgets/Input/SMultiLineEditableTextBox.h"
@@ -9,9 +9,7 @@
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
-void STexturaWindowWidget::Construct(const FArguments& InArgs) {
-	
-	
+void SNWindowWidget::Construct(const FArguments& InArgs) {
 	// Constants
 	
 	constexpr float TextBoxWidth = 1000.f;
@@ -58,13 +56,5 @@ void STexturaWindowWidget::Construct(const FArguments& InArgs) {
 			]
 	];
 }
-
-void STexturaWindowWidget::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime,
-	const float InDeltaTime) {
-	SCompoundWidget::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
-	
-	
-}
-
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

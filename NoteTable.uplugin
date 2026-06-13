@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "Textura",
+	"FriendlyName": "NoteTable",
 	"Description": "Read and write rich text entries from a data table, with per-entry stylesheets and live preview.",
 	"Category": "Other",
 	"CreatedBy": "Oliver Moloney",
@@ -16,7 +16,7 @@
 	"Installed": false,
 	"Modules": [
 		{
-			"Name": "Textura",
+			"Name": "NoteTable",
 			"Type": "Editor",
 			"LoadingPhase": "Default"
 		}

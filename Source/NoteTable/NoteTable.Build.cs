@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class Textura : ModuleRules
+public class NoteTable : ModuleRules
 {
-	public Textura(ReadOnlyTargetRules Target) : base(Target)
+	public NoteTable(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		

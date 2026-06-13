@@ -4,11 +4,11 @@
 
 #include "Modules/ModuleManager.h"
 
-class SRichTextBlock;
 class FToolBarBuilder;
 class FMenuBuilder;
+class SRichTextBlock;
 
-class FTexturaModule : public IModuleInterface
+class FNoteTableModule : public IModuleInterface
 {
 public:
 
@@ -24,7 +24,7 @@ private:
 	void RegisterMenus();
 
 	TSharedRef<class SDockTab> OnSpawnPluginTab(const class FSpawnTabArgs& SpawnTabArgs);
-	
+
 private:
 	TSharedPtr<class FUICommandList> PluginCommands;
 };
