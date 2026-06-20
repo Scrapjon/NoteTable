@@ -19,4 +19,6 @@ public:
 	void Construct(const FArguments& InArgs);
 	
 	FOnTextChanged TextChangedSignature;
+	
+	FOnFinishedChangingProperties FinishedChangingPropertiesSignature;
 };

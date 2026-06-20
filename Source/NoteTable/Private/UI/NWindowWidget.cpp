@@ -4,30 +4,57 @@
 #include "UI/NWindowWidget.h"
 
 #include "SlateOptMacros.h"
+#include "Components/RichTextBlock.h"
+#include "UI/NWindowDetails.h"
 #include "Widgets/Input/SMultiLineEditableTextBox.h"
-#include "Widgets/Text/SRichTextBlock.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
 void SNWindowWidget::Construct(const FArguments& InArgs) {
 	// Constants
 	
-	constexpr float TextBoxWidth = 1000.f;
-	constexpr float TextBoxHeight = 480.f;
-	constexpr float TextBoxPadding = 10.f;
+	constexpr float TextBoxWidth = 0.4f;
 	
-	constexpr float RichTextBoxWidth = TextBoxWidth;
-	constexpr float RichTextBoxHeight = TextBoxHeight;
-	constexpr float RichTextBoxPadding = TextBoxPadding;
+	constexpr float RichTextBoxWidth = 0.4f;
+	
+	constexpr float DetailsBoxWidth = 1.f - TextBoxWidth - RichTextBoxWidth;
+	
+	TObjectPtr<UNWindowDetails> WindowDetails = NewObject<UNWindowDetails>();
 	
 	// Rich Text Block for text preview
-	const TSharedRef<SRichTextBlock> RichTextBlock = SNew(SRichTextBlock); // TODO: maybe come up with a better name for this...
+	URichTextBlock* RichTextBlock = NewObject<URichTextBlock>(GEditor->GetEditorWorldContext().World()); // TODO: maybe come up with a better name for this...
+	TSharedRef<SBox> RichTextBox = SNew(SBox);
+	RichTextBox->SetContent(RichTextBlock->TakeWidget());
+	
+	// Property Details Panel
+	FPropertyEditorModule& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
+	
+	FDetailsViewArgs DetailsViewArgs;
+	DetailsViewArgs.NameAreaSettings = FDetailsViewArgs::HideNameArea;
+	DetailsViewArgs.bHideSelectionTip = true;
+	
+	
+	
+	TSharedRef<IDetailsView> DetailsView = PropertyModule.CreateDetailView(DetailsViewArgs);
+	
+	DetailsView->SetObject(WindowDetails);
+	
 	
 	// Bindings
 	
 	TextChangedSignature.BindLambda([RichTextBlock](const FText& Text) {
 		RichTextBlock->SetText(Text);
 	});
+	
+	auto OnFinishChangingProperties = [RichTextBlock, WindowDetails, RichTextBox](const FPropertyChangedEvent& PropertyChangedEvent) {
+		if (!WindowDetails) return;
+		FText CurrentText = RichTextBlock->GetText();
+		RichTextBlock->SetTextStyleSet(WindowDetails->TextStyleSet);
+		RichTextBox->SetContent(RichTextBlock->TakeWidget());
+	};
+	
+	DetailsView->OnFinishedChangingProperties().AddLambda(
+		OnFinishChangingProperties);
 	
 	// Input Text Box
 	const TSharedRef<SMultiLineEditableTextBox> InputTextBox = SNew(SMultiLineEditableTextBox) // TODO: maybe come up with a better name for this...
@@ -36,22 +63,19 @@ void SNWindowWidget::Construct(const FArguments& InArgs) {
 	
 	ChildSlot [
 		SNew(SVerticalBox) + SVerticalBox::Slot()
-			.HAlign(HAlign_Center)
-			.VAlign(VAlign_Center)
+		.FillHeight(1.f)
 			[
-				SNew(SHorizontalBox) + SHorizontalBox::Slot()
+				SNew(SHorizontalBox) + SHorizontalBox::Slot().FillWidth(TextBoxWidth)
 				[
-					SNew(SBox).MinDesiredWidth(TextBoxWidth).MinDesiredHeight(TextBoxHeight).Padding(TextBoxPadding)
-					[
-						InputTextBox
-					]    
+					InputTextBox
 				]
-				+ SHorizontalBox::Slot()
+				+ SHorizontalBox::Slot().FillWidth(RichTextBoxWidth)
 				[
-					SNew(SBox).MinDesiredWidth(RichTextBoxWidth).MinDesiredHeight(RichTextBoxHeight).Padding(RichTextBoxPadding)
-					[
-						RichTextBlock
-					]
+					RichTextBox
+				]
+				+ SHorizontalBox::Slot().FillWidth(DetailsBoxWidth)
+				[
+					DetailsView
 				]
 			]
 	];
