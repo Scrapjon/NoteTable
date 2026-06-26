@@ -17,5 +17,6 @@ public:
 	UPROPERTY(EditAnywhere, meta = (RequiredAssetDataTags = "RowStructure=/Script/UMG.RichTextStyleRow"))
 	TObjectPtr<UDataTable> TextStyleSet;
 	
-	
+	UPROPERTY(EditAnywhere, meta = (RequiredAssetDataTags = "RowStructure=/Script/NoteTable.NoteTableTextData"))
+	TObjectPtr<UDataTable> TextStorageTable; // TODO: Name this better. Stores the text in the data table.
 };

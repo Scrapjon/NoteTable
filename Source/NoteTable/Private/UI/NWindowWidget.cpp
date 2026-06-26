@@ -5,8 +5,11 @@
 
 #include "SlateOptMacros.h"
 #include "Components/RichTextBlock.h"
+#include "Framework/Text/RichTextLayoutMarshaller.h"
 #include "UI/NWindowDetails.h"
 #include "Widgets/Input/SMultiLineEditableTextBox.h"
+#include "Widgets/Text/SRichTextBlock.h"
+
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
@@ -19,12 +22,17 @@ void SNWindowWidget::Construct(const FArguments& InArgs) {
 	
 	constexpr float DetailsBoxWidth = 1.f - TextBoxWidth - RichTextBoxWidth;
 	
-	TObjectPtr<UNWindowDetails> WindowDetails = NewObject<UNWindowDetails>();
+	WindowDetails = NewObject<UNWindowDetails>();
+	WindowDetails->AddToRoot();
 	
 	// Rich Text Block for text preview
-	URichTextBlock* RichTextBlock = NewObject<URichTextBlock>(GEditor->GetEditorWorldContext().World()); // TODO: maybe come up with a better name for this...
+	
+	// TODO: maybe come up with a better name for this...
+	URichTextBlock* RichTextBlockObj = NewObject<URichTextBlock>(GEditor->GetEditorWorldContext().World());
+	
 	TSharedRef<SBox> RichTextBox = SNew(SBox);
-	RichTextBox->SetContent(RichTextBlock->TakeWidget());
+	
+	RichTextBox->SetContent(RichTextBlockObj->TakeWidget());
 	
 	// Property Details Panel
 	FPropertyEditorModule& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
@@ -42,15 +50,15 @@ void SNWindowWidget::Construct(const FArguments& InArgs) {
 	
 	// Bindings
 	
-	TextChangedSignature.BindLambda([RichTextBlock](const FText& Text) {
-		RichTextBlock->SetText(Text);
+	TextChangedSignature.BindLambda([RichTextBlockObj](const FText& Text) {
+		RichTextBlockObj->SetText(Text);
 	});
 	
-	auto OnFinishChangingProperties = [RichTextBlock, WindowDetails, RichTextBox](const FPropertyChangedEvent& PropertyChangedEvent) {
+	auto OnFinishChangingProperties = [this, RichTextBlockObj, RichTextBox](const FPropertyChangedEvent& PropertyChangedEvent) {
 		if (!WindowDetails) return;
-		FText CurrentText = RichTextBlock->GetText();
-		RichTextBlock->SetTextStyleSet(WindowDetails->TextStyleSet);
-		RichTextBox->SetContent(RichTextBlock->TakeWidget());
+		FText CurrentText = RichTextBlockObj->GetText();
+		RichTextBlockObj->SetTextStyleSet(WindowDetails->TextStyleSet);
+		RichTextBox->SetContent(RichTextBlockObj->TakeWidget());
 	};
 	
 	DetailsView->OnFinishedChangingProperties().AddLambda(
@@ -79,6 +87,42 @@ void SNWindowWidget::Construct(const FArguments& InArgs) {
 				]
 			]
 	];
+}
+
+SNWindowWidget::~SNWindowWidget() {
+	WindowDetails->RemoveFromRoot();
+}
+
+void SNWindowWidget::RebuildPreview() {
+	TObjectPtr<UDataTable> StyleTable = WindowDetails->TextStyleSet;
+	
+	RichTextStyleData.StyleInstance = MakeShareable(new FSlateStyleSet("NoteTableRichText"));
+	
+	FTextBlockStyle DefaultStyle = FTextBlockStyle()
+	.SetFont(FCoreStyle::GetDefaultFontStyle("Regular", 12))
+	.SetColorAndOpacity(FLinearColor::White);
+	
+	if (StyleTable) {
+		for (const TPair<FName, uint8*>& Row : StyleTable->GetRowMap()) {
+			const FRichTextStyleRow* StyleRow = reinterpret_cast<FRichTextStyleRow*>(Row.Value);
+			RichTextStyleData.StyleInstance->Set(Row.Key, StyleRow->TextStyle);
+			if (Row.Key == FName("Default")) {
+				DefaultStyle = StyleRow->TextStyle;
+			}
+		}
+	}
+	
+	TArray<TSharedRef<ITextDecorator>> Decorators;
+	
+	TSharedRef<FRichTextLayoutMarshaller> Marshaller = 
+		FRichTextLayoutMarshaller::Create(nullptr, nullptr, Decorators, RichTextStyleData.StyleInstance.Get());
+	
+	RichTextStyleData.PreviewBlock = SNew(SRichTextBlock)
+		.Text(CurrentText)
+		.TextStyle(&DefaultStyle)
+		.Marshaller(Marshaller)
+		.AutoWrapText(true);
+	RichTextStyleData.PreviewContainer->SetContent(RichTextStyleData.PreviewBlock.ToSharedRef());
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

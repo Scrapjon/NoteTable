@@ -10,7 +10,7 @@
 class FJsonObject;
 
 USTRUCT(BlueprintType)
-struct FNoteTableTextData {
+struct FNoteTableTextData : public FTableRowBase {
 	GENERATED_BODY()
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
